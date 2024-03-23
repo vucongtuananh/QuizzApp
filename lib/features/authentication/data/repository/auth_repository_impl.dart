@@ -16,11 +16,7 @@ class AuthRepositoryImpl implements AuthRepository {
     final data = await _loginRemoteDataSource.getLoginModel(userDataPost);
     return data.when(
       success: (data) {
-        if (data!.status! <= 200) {
-          return ApiResultModel.success(MessageEntity(message: data.message!));
-        } else {
-          return ApiResultModel.success(MessageEntity(message: data.errorModel!.password ?? data.errorModel!.email!));
-        }
+        return ApiResultModel.success(MessageEntity(message: data!.message!));
       },
       failure: (error) {
         return ApiResultModel.failure(error);

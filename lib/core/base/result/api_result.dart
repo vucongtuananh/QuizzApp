@@ -6,5 +6,5 @@ part 'api_result.freezed.dart';
 @freezed
 class ApiResultModel<T> with _$ApiResultModel<T> {
   factory ApiResultModel.success(T data) = Success<T>;
-  factory ApiResultModel.failure(FailureModel error) = Failure<T>;
+  factory ApiResultModel.failure(FailureModel failureModel) = Failure<T>;
 }

@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
-import 'package:quizz_app/core/routes/app_router.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_bloc.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_event.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_state.dart';
 import 'package:quizz_app/features/authentication/utils/user_data_post.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   TextEditingController? _useNameController;
   TextEditingController? _passwordController;
   final _formKey = GlobalKey<FormState>();
@@ -210,9 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                           width: 8,
                         ),
                         GestureDetector(
-                          onTap: () {
-                            context.pushNamed(AppRouter.register);
-                          },
+                          onTap: () {},
                           child: const Text(
                             "Register!",
                             style: TextStyle(

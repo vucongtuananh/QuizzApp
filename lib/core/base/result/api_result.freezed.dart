@@ -19,19 +19,19 @@ mixin _$ApiResultModel<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T data) success,
-    required TResult Function(FailureModel error) failure,
+    required TResult Function(FailureModel failureModel) failure,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T data)? success,
-    TResult? Function(FailureModel error)? failure,
+    TResult? Function(FailureModel failureModel)? failure,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T data)? success,
-    TResult Function(FailureModel error)? failure,
+    TResult Function(FailureModel failureModel)? failure,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -140,7 +140,7 @@ class _$SuccessImpl<T> implements Success<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T data) success,
-    required TResult Function(FailureModel error) failure,
+    required TResult Function(FailureModel failureModel) failure,
   }) {
     return success(data);
   }
@@ -149,7 +149,7 @@ class _$SuccessImpl<T> implements Success<T> {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T data)? success,
-    TResult? Function(FailureModel error)? failure,
+    TResult? Function(FailureModel failureModel)? failure,
   }) {
     return success?.call(data);
   }
@@ -158,7 +158,7 @@ class _$SuccessImpl<T> implements Success<T> {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T data)? success,
-    TResult Function(FailureModel error)? failure,
+    TResult Function(FailureModel failureModel)? failure,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -214,7 +214,7 @@ abstract class _$$FailureImplCopyWith<T, $Res> {
           _$FailureImpl<T> value, $Res Function(_$FailureImpl<T>) then) =
       __$$FailureImplCopyWithImpl<T, $Res>;
   @useResult
-  $Res call({FailureModel error});
+  $Res call({FailureModel failureModel});
 }
 
 /// @nodoc
@@ -228,12 +228,12 @@ class __$$FailureImplCopyWithImpl<T, $Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? error = null,
+    Object? failureModel = null,
   }) {
     return _then(_$FailureImpl<T>(
-      null == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
+      null == failureModel
+          ? _value.failureModel
+          : failureModel // ignore: cast_nullable_to_non_nullable
               as FailureModel,
     ));
   }
@@ -242,14 +242,14 @@ class __$$FailureImplCopyWithImpl<T, $Res>
 /// @nodoc
 
 class _$FailureImpl<T> implements Failure<T> {
-  _$FailureImpl(this.error);
+  _$FailureImpl(this.failureModel);
 
   @override
-  final FailureModel error;
+  final FailureModel failureModel;
 
   @override
   String toString() {
-    return 'ApiResultModel<$T>.failure(error: $error)';
+    return 'ApiResultModel<$T>.failure(failureModel: $failureModel)';
   }
 
   @override
@@ -257,11 +257,12 @@ class _$FailureImpl<T> implements Failure<T> {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$FailureImpl<T> &&
-            (identical(other.error, error) || other.error == error));
+            (identical(other.failureModel, failureModel) ||
+                other.failureModel == failureModel));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, error);
+  int get hashCode => Object.hash(runtimeType, failureModel);
 
   @JsonKey(ignore: true)
   @override
@@ -273,29 +274,29 @@ class _$FailureImpl<T> implements Failure<T> {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(T data) success,
-    required TResult Function(FailureModel error) failure,
+    required TResult Function(FailureModel failureModel) failure,
   }) {
-    return failure(error);
+    return failure(failureModel);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(T data)? success,
-    TResult? Function(FailureModel error)? failure,
+    TResult? Function(FailureModel failureModel)? failure,
   }) {
-    return failure?.call(error);
+    return failure?.call(failureModel);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(T data)? success,
-    TResult Function(FailureModel error)? failure,
+    TResult Function(FailureModel failureModel)? failure,
     required TResult orElse(),
   }) {
     if (failure != null) {
-      return failure(error);
+      return failure(failureModel);
     }
     return orElse();
   }
@@ -333,9 +334,9 @@ class _$FailureImpl<T> implements Failure<T> {
 }
 
 abstract class Failure<T> implements ApiResultModel<T> {
-  factory Failure(final FailureModel error) = _$FailureImpl<T>;
+  factory Failure(final FailureModel failureModel) = _$FailureImpl<T>;
 
-  FailureModel get error;
+  FailureModel get failureModel;
   @JsonKey(ignore: true)
   _$$FailureImplCopyWith<T, _$FailureImpl<T>> get copyWith =>
       throw _privateConstructorUsedError;
