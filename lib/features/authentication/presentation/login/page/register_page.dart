@@ -1,11 +1,13 @@
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
+import 'package:quizz_app/core/routes/app_router.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_bloc.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_event.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_state.dart';
-import 'package:quizz_app/features/authentication/utils/user_data_post.dart';
+import 'package:quizz_app/features/authentication/utils/dto/register_dto/user_data_register_post.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -15,15 +17,20 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  TextEditingController? _useNameController;
+  TextEditingController? _fullNameController;
+  TextEditingController? _userNameController;
+  TextEditingController? _emailController;
   TextEditingController? _passwordController;
+  TextEditingController? _rePasswordController;
   final _formKey = GlobalKey<FormState>();
-
+  bool isObscureText = true;
   AuthBloc? _authBloc;
 
   @override
   void initState() {
-    _useNameController = TextEditingController();
+    _fullNameController = TextEditingController();
+    _userNameController = TextEditingController();
+    _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _authBloc = BlocProvider.of<AuthBloc>(context);
 
@@ -32,7 +39,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    _useNameController!.dispose();
+    _fullNameController!.dispose();
+    _userNameController!.dispose();
+    _emailController!.dispose();
     _passwordController!.dispose();
     super.dispose();
   }
@@ -41,191 +50,277 @@ class _RegisterPageState extends State<RegisterPage> {
     if (pass == "" || pass!.isEmpty) {
       return "khong duoc de trong pass";
     }
+    if (pass.length < 6) {
+      return "pass qua ngan , thu lai!";
+    }
+    return null;
+  }
+
+  String? validatorRePass(String? rePpass) {
+    if (rePpass == "" || rePpass!.isEmpty) {
+      return "khong duoc de trong pass";
+    }
+    if (rePpass != _passwordController!.text) {
+      return "mat khau khong trung khop";
+    }
     return null;
   }
 
   String? validatorUsername(String? userName) {
     if (userName == "" || userName!.isEmpty) {
-      return "khong duoc de trong name";
+      return "khong duoc de trong user name";
     }
     return null;
   }
 
-  void login({required String userName, required String password}) {
+  String? validatorFullname(String? fullName) {
+    if (fullName == "" || fullName!.isEmpty) {
+      return "khong duoc de trong full name";
+    }
+    return null;
+  }
+
+  String? validatorEmail(String? email) {
+    if (email == "" || email!.isEmpty) {
+      return "khong duoc de trong email";
+    }
+    if (!EmailValidator.validate(email)) {
+      return "vui long nhap dung dinh dang email";
+    }
+    return null;
+  }
+
+  void register({required String fullName, required String userName, required String email, required String password}) {
     if (_formKey.currentState!.validate()) {
-      _authBloc!.add(LoginStartEvent(
-        UserDataPost(password, userName),
+      _authBloc!.add(RegisterStartEvent(
+        UserDataRegisterPost(password, userName, email, fullName),
       ));
     }
     ;
   }
 
-  @override
-  Widget build(BuildContext logincontext) {
-    return Scaffold(
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state is LoginLoadedState) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              // Add Your Code here.
-              showDialog(
-                context: logincontext,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Thoong bao'),
-                    content: Text(state.messageEntity.message),
-                    actions: <Widget>[
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'Cancel'),
-                        child: const Text('Cancel'),
+  void handleRetry() {
+    _authBloc!.add(AuthStartEvent());
+  }
+
+  Widget _buildRegisterInitial() {
+    return Center(
+      child: SingleChildScrollView(
+        child: Card(
+          margin: const EdgeInsets.symmetric(horizontal: 30),
+          elevation: 1,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 20,
+              horizontal: 20,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Register",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+                ),
+                const SizedBox(
+                  height: 40,
+                ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TextFormField(
+                        controller: _fullNameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                          hintText: 'Enter your full name',
+                        ),
+                        validator: validatorFullname,
                       ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, 'OK'),
-                        child: const Text('OK'),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _userNameController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          hintText: 'Enter your user name',
+                        ),
+                        validator: validatorUsername,
+                        // obscureText: true,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          hintText: 'Enter your email',
+                        ),
+                        validator: validatorEmail,
+                        // obscureText: true,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          hintText: 'Enter your password',
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscureText = !isObscureText;
+                              });
+                            },
+                            icon: isObscureText ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                          ),
+                        ),
+                        validator: validatorPass,
+                        obscureText: isObscureText,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      TextFormField(
+                        controller: _rePasswordController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          hintText: 'Reconfirm you password',
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              setState(() {
+                                isObscureText = !isObscureText;
+                              });
+                            },
+                            icon: isObscureText ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                          ),
+                        ),
+                        validator: validatorRePass,
+                        obscureText: isObscureText,
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          register(
+                            userName: _userNameController!.text,
+                            password: _passwordController!.text,
+                            email: _emailController!.text,
+                            fullName: _fullNameController!.text,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: mainColor,
+                          ),
+                          child: const Text("Register",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              )),
+                        ),
                       ),
                     ],
-                  );
-                },
-              );
-            });
-          }
-          return Center(
-            child: Card(
-              margin: const EdgeInsets.symmetric(horizontal: 30),
-              elevation: 1,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 20,
-                  horizontal: 20,
+                  ),
                 ),
-                child: Column(
+                const SizedBox(
+                  height: 20,
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
-                      "Login",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-                    ),
-                    const SizedBox(
-                      height: 40,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: mainColor,
-                                width: 1.5,
-                              )),
-                          child: SvgPicture.asset(
-                            'assets/images/google_icon.svg',
-                            height: 40,
-                            width: 40,
-                          ),
-                        ),
-                        SvgPicture.asset(
-                          'assets/images/fb_icon.svg',
-                          height: 50,
-                          width: 50,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 12,
-                    ),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextFormField(
-                            controller: _useNameController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                              hintText: 'Enter user name',
-                            ),
-                            validator: validatorUsername,
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          TextFormField(
-                            controller: _passwordController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              hintText: 'Enter your password',
-                            ),
-                            validator: validatorPass,
-                            obscureText: true,
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          state is LoginLoadingState
-                              ? const CircularProgressIndicator()
-                              : GestureDetector(
-                                  onTap: () {
-                                    login(
-                                      password: _passwordController!.text,
-                                      userName: _useNameController!.text,
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: mainColor,
-                                    ),
-                                    child: const Text("Login",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                        )),
-                                  ),
-                                ),
-                        ],
+                      "Already have a account ?",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
                       ),
                     ),
                     const SizedBox(
-                      height: 20,
+                      width: 8,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Don't have a account yet?",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey,
-                          ),
+                    GestureDetector(
+                      onTap: () {
+                        context.go(AppRouter.login);
+                      },
+                      child: const Text(
+                        "Login!",
+                        style: TextStyle(
+                          color: mainColor,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        GestureDetector(
-                          onTap: () {},
-                          child: const Text(
-                            "Register!",
-                            style: TextStyle(
-                              color: mainColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        )
-                      ],
+                      ),
                     )
                   ],
-                ),
-              ),
+                )
+              ],
             ),
-          );
-        },
+          ),
+        ),
       ),
+    );
+  }
+
+  Widget _buildRegisterLoadedFailureWidget(RegisterLoadedFailureState state, BuildContext context) {
+    return AlertDialog(
+      title: const Text('Thoong bao'),
+      content: Text(state.messageEntity.message),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => handleRetry(),
+          child: const Icon(Icons.replay),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRegisterLoadingWidget() {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+
+    var _registerMainWidget = switch (authState) {
+      AuthCheckAlreadyLoginInitialState() => _buildRegisterInitial(),
+      RegisterLoadedFailureState() => _buildRegisterLoadedFailureWidget(authState, context),
+      RegisterLoadingState() => _buildRegisterLoadingWidget(),
+      RegisterLoadedSuccessState() => Container(),
+      _ => Container(),
+    };
+
+    _registerMainWidget = BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is RegisterLoadedSuccessState) {
+          context.go(AppRouter.login);
+          _authBloc!.add(
+            LoginPrefill(password: _passwordController!.text, usename: _userNameController!.text),
+          );
+        }
+      },
+      child: _registerMainWidget,
+    );
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 158, 190, 248),
+      body: _registerMainWidget,
     );
   }
 }
