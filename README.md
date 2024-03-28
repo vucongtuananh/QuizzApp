@@ -1,6 +1,6 @@
 # quizz_app
 
-A new Flutter project.
+An app to learn English, revision, test, and entertain.
 
 ## Getting Started
 
