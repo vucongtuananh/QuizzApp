@@ -6,12 +6,13 @@ part of 'user_data_post.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-UserDataPost _$UserDataPostFromJson(Map<String, dynamic> json) => UserDataPost(
+UserDataLoginPost _$UserDataLoginPostFromJson(Map<String, dynamic> json) =>
+    UserDataLoginPost(
       json['password'] as String,
       json['username'] as String,
     );
 
-Map<String, dynamic> _$UserDataPostToJson(UserDataPost instance) =>
+Map<String, dynamic> _$UserDataLoginPostToJson(UserDataLoginPost instance) =>
     <String, dynamic>{
       'username': instance.username,
       'password': instance.password,

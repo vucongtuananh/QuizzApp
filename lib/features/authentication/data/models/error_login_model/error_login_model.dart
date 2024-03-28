@@ -9,13 +9,12 @@ class ErrorLoginModel extends Equatable {
 
   factory ErrorLoginModel.fromJson(Map<String, dynamic> json) => _$ErrorLoginModelFromJson(json);
 
-  ErrorLoginModel({
+  const ErrorLoginModel({
     this.email,
     this.password,
   });
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
         email,
         password,

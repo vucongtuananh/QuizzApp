@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:quizz_app/features/authentication/data/models/user_login_model/user_login_model.dart';
+
 part 'data_login_model.g.dart';
 
 @JsonSerializable()

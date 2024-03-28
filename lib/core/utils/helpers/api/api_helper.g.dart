@@ -13,7 +13,7 @@ class _ApiHelper implements ApiHelper {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://192.168.0.105:8000/';
+    baseUrl ??= 'http://192.168.0.104:8000/';
   }
 
   final Dio _dio;
@@ -22,12 +22,12 @@ class _ApiHelper implements ApiHelper {
 
   @override
   Future<HttpResponse<LoginModel?>> getLoginModel(
-      UserDataPost userDataPost) async {
+      UserDataLoginPost userDataLoginPost) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(userDataPost.toJson());
+    _data.addAll(userDataLoginPost.toJson());
     final _result = await _dio.fetch<Map<String, dynamic>?>(
         _setStreamType<HttpResponse<LoginModel>>(Options(
       method: 'POST',
@@ -37,6 +37,37 @@ class _ApiHelper implements ApiHelper {
             .compose(
               _dio.options,
               'auth/login',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value =
+        _result.data == null ? null : LoginModel.fromJson(_result.data!);
+    final httpResponse = HttpResponse(value, _result);
+    return httpResponse;
+  }
+
+  @override
+  Future<HttpResponse<LoginModel?>> getRegisterModel(
+      UserDataRegisterPost userDataLoginPost) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(userDataLoginPost.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>?>(
+        _setStreamType<HttpResponse<LoginModel>>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              'auth/register',
               queryParameters: queryParameters,
               data: _data,
             )
