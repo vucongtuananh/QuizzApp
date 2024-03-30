@@ -90,13 +90,13 @@ class _LoginPageState extends State<LoginPage> {
                     width: 1.5,
                   )),
               child: SvgPicture.asset(
-                'assets/images/google_icon.svg',
+                'assets/images/icon/google_icon.svg',
                 height: 40,
                 width: 40,
               ),
             ),
             SvgPicture.asset(
-              'assets/images/fb_icon.svg',
+              'assets/images/icon/fb_icon.svg',
               height: 50,
               width: 50,
             ),
@@ -248,7 +248,7 @@ class _LoginPageState extends State<LoginPage> {
               context.read<AuthBloc>().add(AuthCheckAlreadyLoginEvent());
               break;
             case AuthCheckAlreadyLoginSucessState():
-              context.go(AppRouter.home);
+              context.go(AppRouter.mainScreen);
               break;
           }
         },

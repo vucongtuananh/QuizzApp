@@ -4,12 +4,24 @@ import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_b
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_state.dart';
 import 'package:quizz_app/features/authentication/presentation/login/page/login_page.dart';
 import 'package:quizz_app/features/authentication/presentation/login/page/register_page.dart';
+import 'package:quizz_app/features/calendar/presentation/pages/calendar_page.dart';
+import 'package:quizz_app/features/create/presentation/pages/create_page.dart';
 import 'package:quizz_app/features/home/presentation/pages/home_page.dart';
+import 'package:quizz_app/features/library/presentation/pages/library_page.dart';
+import 'package:quizz_app/features/traning/presentation/pages/training_page.dart';
+import 'package:quizz_app/main_screen/tab_screen.dart';
 
 class AppRouter {
+  static const String home = "/home";
+  static const String library = "/library";
+  static const String calendar = "/calendar";
+  static const String create = "/create";
+  static const String training = "/training";
+  static const String cardDetail = "/cardDetail";
   static const String login = "/login";
   static const String register = "/register";
-  static const String home = "/";
+  static const String mainScreen = "/";
+
   static const publicRoutes = [
     login,
     register,
@@ -29,8 +41,32 @@ final goRoute = GoRouter(
     routes: [
       // GoRoute(path: AppRouter.login,builder: (context, state) => HomePage(),),
       GoRoute(
+        path: AppRouter.mainScreen,
+        builder: (context, state) => const MainScreen(),
+      ),
+      GoRoute(
         path: AppRouter.home,
         builder: (context, state) => const HomePage(),
+      ),
+      // GoRoute(
+      //   path: AppRouter.cardDetail,
+      //   builder: (context, state) => const CardDetails(),
+      // ),
+      GoRoute(
+        path: AppRouter.library,
+        builder: (context, state) => const LibraryPage(),
+      ),
+      GoRoute(
+        path: AppRouter.calendar,
+        builder: (context, state) => const CalendarPage(),
+      ),
+      GoRoute(
+        path: AppRouter.create,
+        builder: (context, state) => const CreatePage(),
+      ),
+      GoRoute(
+        path: AppRouter.training,
+        builder: (context, state) => const TrainingPage(),
       ),
       GoRoute(
         path: AppRouter.login,
