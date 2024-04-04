@@ -7,6 +7,10 @@ import 'package:intl/intl.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/core/routes/app_router.dart';
+import 'package:quizz_app/features/calendar/domain/calendar_entity.dart';
+import 'package:quizz_app/features/calendar/domain/date_entity.dart';
+import 'package:quizz_app/features/calendar/domain/mock_data.dart';
+import 'package:quizz_app/features/calendar/domain/schedule_entity.dart';
 
 class CalendarCard extends StatefulWidget {
   const CalendarCard({
@@ -25,15 +29,47 @@ class _CalendarCardState extends State<CalendarCard> {
   // String timePicked = DateFormat.M().format(DateTime.now());
   String timePicked = "${DateFormat.EEEE().format(DateTime.now())}, ${DateTime.now().day}th";
 
+  List<ScheduleEntity> _listSchedule = [];
+
+  final List<CalendarEntity> _mockCalendarList = [
+    CalendarEntity(dateTime: DateEntity(day: '05', month: '04', year: '2024'), listSchedule: listSchedule1),
+    CalendarEntity(dateTime: DateEntity(day: '05', month: '05', year: '2024'), listSchedule: listSchedule2),
+    CalendarEntity(dateTime: DateEntity(day: '06', month: '06', year: '2024'), listSchedule: listSchedule3),
+    CalendarEntity(dateTime: DateEntity(day: '07', month: '07', year: '2024'), listSchedule: listSchedule4),
+    CalendarEntity(dateTime: DateEntity(day: '08', month: '08', year: '2024'), listSchedule: listSchedule5),
+    CalendarEntity(dateTime: DateEntity(day: '09', month: '09', year: '2024'), listSchedule: listSchedule6),
+    CalendarEntity(dateTime: DateEntity(day: '10', month: '10', year: '2024'), listSchedule: listSchedule7),
+    CalendarEntity(dateTime: DateEntity(day: '11', month: '11', year: '2024'), listSchedule: listSchedule8),
+    CalendarEntity(dateTime: DateEntity(day: '12', month: '12', year: '2024'), listSchedule: listSchedule9),
+  ];
+
   void getTimeToggle(String time) {
     setState(() {
       timePicked = time;
     });
   }
 
+  void loadListSchedule(DateTime dateTime) {
+    CalendarEntity tappedCalendar = _mockCalendarList.singleWhere((element) {
+      int day = int.parse(element.dateTime.day);
+      int month = int.parse(element.dateTime.month);
+      int year = int.parse(
+        element.dateTime.year,
+      );
+      ;
+      bool isChoose = dateTime.day == day && dateTime.month == month && dateTime.year == year;
+
+      return isChoose;
+    });
+    setState(() {
+      _listSchedule = tappedCalendar.listSchedule;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    loadListSchedule(DateTime.now());
   }
 
   @override
@@ -81,7 +117,11 @@ class _CalendarCardState extends State<CalendarCard> {
                       const SizedBox(
                         height: 10,
                       ),
-                      _boxOfDay(dayInWeek, dayInMoth),
+                      _boxOfDay(
+                        dayInWeek,
+                        dayInMoth,
+                        snapshot.data ?? _calendarStreamer.month,
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -102,6 +142,57 @@ class _CalendarCardState extends State<CalendarCard> {
                     fontSize: 20,
                   ),
                 ),
+              ),
+              Card(
+                elevation: 2,
+                child: SizedBox(
+                  height: widget._size.height * 0.4,
+                  child: ListView.builder(
+                    // shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                        child: Container(
+                            width: widget._size.width,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: mainColor.withOpacity(0.2),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    _listSchedule[index].title,
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    "${_listSchedule[index].beginTime} - ${_listSchedule[index].finishTime}",
+                                    style: TextStyle(
+                                      color: mainColor,
+                                      fontWeight: FontWeight.normal,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      );
+                    },
+                    itemCount: _listSchedule.length,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 30,
               ),
             ],
           );
@@ -137,7 +228,7 @@ class _CalendarCardState extends State<CalendarCard> {
         ));
   }
 
-  Flexible _boxOfDay(String Function(int day) dayInWeek, int dayInMoth) {
+  Flexible _boxOfDay(String Function(int day) dayInWeek, int dayInMoth, int month) {
     return Flexible(
       fit: FlexFit.loose,
       flex: 1,
@@ -152,6 +243,11 @@ class _CalendarCardState extends State<CalendarCard> {
                 setState(() {
                   chooseItemIndex.value = index + 1;
                 });
+                loadListSchedule(DateTime(
+                  DateTime.now().year,
+                  month,
+                  index + 1,
+                ));
               },
               child: ListenableBuilder(
                 listenable: chooseItemIndex,
