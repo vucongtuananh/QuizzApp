@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
+import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:quizz_app/features/create/presentation/pages/create_page.dart';
 import 'package:quizz_app/features/home/presentation/pages/home_page.dart';
 import 'package:quizz_app/features/library/presentation/pages/library_page.dart';
-import 'package:quizz_app/features/traning/presentation/pages/training_page.dart';
+import 'package:quizz_app/features/profile/presentation/pages/training_page.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,9 +19,9 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screen = [
     const HomePage(),
     const LibraryPage(),
-    const CalendarPage(),
     const CreatePage(),
-    const TrainingPage(),
+    const CalendarPage(),
+    const PersonalPage(),
   ];
 
   int currentPageIndex = 0;
@@ -35,36 +37,33 @@ class _MainScreenState extends State<MainScreen> {
         },
         indicatorColor: mainColor,
         selectedIndex: currentPageIndex,
-        destinations: const <Widget>[
-          NavigationDestination(
-            selectedIcon: Icon(Icons.home),
+        destinations: <Widget>[
+          const NavigationDestination(
+            // selectedIcon: Icon(Icons.home),
             icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Badge(child: Icon(Icons.book)),
             label: 'Library',
           ),
           NavigationDestination(
+            icon: SvgPicture.asset(SvgIcon.addIcon),
+            label: 'Create',
+          ),
+          const NavigationDestination(
             icon: Badge(
               label: Text('2'),
               child: Icon(Icons.calendar_month),
             ),
-            label: 'Messages',
+            label: 'Calendar',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Badge(
               label: Text('2'),
-              child: Icon(Icons.add),
+              child: Icon(Icons.person),
             ),
-            label: 'Messages',
-          ),
-          NavigationDestination(
-            icon: Badge(
-              label: Text('2'),
-              child: Icon(Icons.music_note_sharp),
-            ),
-            label: 'Messages',
+            label: 'Profile',
           ),
         ],
       ),

@@ -3,7 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/features/home/presentation/widgets/card_word_details.dart';
-import 'package:quizz_app/main.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class CardDetails extends StatefulWidget {
@@ -47,6 +46,24 @@ class _CardDetailsState extends State<CardDetails> {
       word: "Home",
     ),
   ];
+
+  final List<Map<String, String>> _listWords = [
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+  ];
   @override
   void initState() {
     super.initState();
@@ -62,164 +79,136 @@ class _CardDetailsState extends State<CardDetails> {
   @override
   Widget build(BuildContext context) {
     final _size = MediaQuery.of(context).size;
+    var singleChildScrollView = CustomScrollView(slivers: [
+      SliverToBoxAdapter(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _bulidListCardWord(_size, _pageController),
+            SizedBox(
+              height: _size.height * 0.02,
+            ),
+            _headerTitle(_size),
+            SizedBox(
+              height: _size.height * 0.02,
+            ),
+            _revisionSelection(_size),
+            SizedBox(
+              height: _size.height * 0.02,
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Card",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {},
+                    child: SvgPicture.asset(SvgIcon.filterIcon),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: _size.height * 0.02,
+            ),
+          ],
+        ),
+      ),
+      _listWord()
+    ]);
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: const Text(""),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _headerTitle(_size),
-              SizedBox(
-                height: _size.height * 0.02,
-              ),
-              _revisionSelection(_size),
-              SizedBox(
-                height: _size.height * 0.02,
-              ),
-              _bulidListCardWord(_size, _pageController),
-            ],
-          ),
-        ));
+        body: singleChildScrollView);
   }
 
-  Column _revisionSelection(Size _size) {
+  SliverList _listWord() {
+    return SliverList.builder(
+      itemBuilder: (context, index) {
+        return Card(
+          margin: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 5),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 10,
+              vertical: 10,
+            ),
+            child: Row(
+              // mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Expanded(flex: 1, child: Align(alignment: Alignment.centerLeft, child: Text(_listWords[index].keys.toString()))),
+                Expanded(
+                    flex: 2,
+                    child: Center(
+                        child: Text(
+                      _listWords[index].values.toString(),
+                    ))),
+                Expanded(flex: 1, child: Align(alignment: Alignment.centerRight, child: Icon(Icons.volume_down_outlined))),
+              ],
+            ),
+          ),
+        );
+      },
+      itemCount: _listWords.length,
+    );
+  }
+
+  Column _revisionSelection(Size size) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Card(
-            color: mainColor,
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  SvgIcon.learnIcon,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: _size.width * 0.02,
-                ),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Học",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Ôn tập các thuật ngữ đã học",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Card(
-            color: mainColor,
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  SvgIcon.learnIcon,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: _size.width * 0.02,
-                ),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Học",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Ôn tập các thuật ngữ đã học",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Card(
-            color: mainColor,
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  SvgIcon.learnIcon,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: _size.width * 0.02,
-                ),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Học",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Ôn tập các thuật ngữ đã học",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Card(
-            color: mainColor,
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  SvgIcon.learnIcon,
-                  color: Colors.white,
-                ),
-                SizedBox(
-                  width: _size.width * 0.02,
-                ),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Học",
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Ôn tập các thuật ngữ đã học",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
+        _selectionElement(size),
+        _selectionElement(size),
+        _selectionElement(size),
       ],
+    );
+  }
+
+  Padding _selectionElement(Size size) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Card(
+        elevation: 2,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                SvgIcon.learnIcon,
+                color: mainColor,
+              ),
+              SizedBox(
+                width: size.width * 0.02,
+              ),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Học",
+                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "Ôn tập các thuật ngữ đã học",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
     );
   }
 
@@ -241,16 +230,16 @@ class _CardDetailsState extends State<CardDetails> {
           ),
           Row(
             children: [
-              SvgPicture.asset(SvgIcon.starYellow, height: _size.height * 0.02),
+              SvgPicture.asset(SvgIcon.avatarBoyIcon, height: _size.height * 0.02),
               SizedBox(
                 width: _size.width * 0.01,
               ),
               const Text(
-                "5.0 (2 lượt đánh giá)",
+                "Vu Cong Tuan anh |  21 items",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
-              )
+              ),
             ],
           ),
         ],

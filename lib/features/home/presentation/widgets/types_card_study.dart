@@ -48,13 +48,17 @@ class TypesOfCardStudy extends StatelessWidget {
             ],
           ),
         ),
+        SizedBox(
+          height: 10,
+        ),
         Container(
-          margin: const EdgeInsets.symmetric(
-            // horizontal: 20,
-            vertical: 18,
-          ),
-          height: _size.height * 0.2,
+          // margin: const EdgeInsets.symmetric(
+          //   // horizontal: 20,
+          //   vertical: 10,
+          // ),
+          height: _size.height * 0.25,
           child: ListView(
+            padding: EdgeInsets.zero,
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             children: <Widget>[
