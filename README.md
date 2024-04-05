@@ -1,8 +1,10 @@
 # quizz_app
 
-An app to learn English, revision, test, and entertain.
+An app to learn English, test, and entertain.
 
 ## Getting Started
+
+Just a sketch about UI, not full now, hold on ...
 
 ![Screenshot_2024-04-05-01-47-49-577_com example quizz_app](https://github.com/vucongtuananh/QuizzApp/assets/106484204/05d767d8-2200-4e6c-9c04-ff4d9d222a12)![Screenshot_2024-04-05-01-47-56-035_com example quizz_app](https://github.com/vucongtuananh/QuizzApp/assets/106484204/b436c036-293a-4d46-b4e9-a6c69f7eeaeb)
 ![Screenshot_2024-04-05-17-17-39-344_com example quizz_app](https://github.com/vucongtuananh/QuizzApp/assets/106484204/e6e410a2-9fa5-4ff7-82e6-84775bb4fe0c)
