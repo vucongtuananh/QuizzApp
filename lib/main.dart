@@ -54,6 +54,7 @@ class _AppContentState extends State<AppContent> {
       return Container();
     }
     return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
       routerConfig: goRoute,
       title: 'Flutter Demo',
       theme: ThemeData(

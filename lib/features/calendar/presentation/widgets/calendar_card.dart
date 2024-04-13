@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -7,10 +5,11 @@ import 'package:intl/intl.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/core/routes/app_router.dart';
-import 'package:quizz_app/features/calendar/domain/calendar_entity.dart';
-import 'package:quizz_app/features/calendar/domain/date_entity.dart';
-import 'package:quizz_app/features/calendar/domain/mock_data.dart';
-import 'package:quizz_app/features/calendar/domain/schedule_entity.dart';
+import 'package:quizz_app/features/calendar/mock/calendar_entity.dart';
+import 'package:quizz_app/features/calendar/mock/date_entity.dart';
+import 'package:quizz_app/features/calendar/mock/mock_data.dart';
+import 'package:quizz_app/features/calendar/mock/schedule_entity.dart';
+import 'package:quizz_app/features/calendar/presentation/utils/calendar_streamer.dart';
 
 class CalendarCard extends StatefulWidget {
   const CalendarCard({
@@ -26,22 +25,9 @@ class CalendarCard extends StatefulWidget {
 class _CalendarCardState extends State<CalendarCard> {
   final CalendarStreamer _calendarStreamer = CalendarStreamer();
   final ValueNotifier<int> chooseItemIndex = ValueNotifier<int>(DateTime.now().day);
+  int year = DateTime.now().year;
   // String timePicked = DateFormat.M().format(DateTime.now());
   String timePicked = "${DateFormat.EEEE().format(DateTime.now())}, ${DateTime.now().day}th";
-
-  List<ScheduleEntity> _listSchedule = [];
-
-  final List<CalendarEntity> _mockCalendarList = [
-    CalendarEntity(dateTime: DateEntity(day: '05', month: '04', year: '2024'), listSchedule: listSchedule1),
-    CalendarEntity(dateTime: DateEntity(day: '05', month: '05', year: '2024'), listSchedule: listSchedule2),
-    CalendarEntity(dateTime: DateEntity(day: '06', month: '06', year: '2024'), listSchedule: listSchedule3),
-    CalendarEntity(dateTime: DateEntity(day: '07', month: '07', year: '2024'), listSchedule: listSchedule4),
-    CalendarEntity(dateTime: DateEntity(day: '08', month: '08', year: '2024'), listSchedule: listSchedule5),
-    CalendarEntity(dateTime: DateEntity(day: '09', month: '09', year: '2024'), listSchedule: listSchedule6),
-    CalendarEntity(dateTime: DateEntity(day: '10', month: '10', year: '2024'), listSchedule: listSchedule7),
-    CalendarEntity(dateTime: DateEntity(day: '11', month: '11', year: '2024'), listSchedule: listSchedule8),
-    CalendarEntity(dateTime: DateEntity(day: '12', month: '12', year: '2024'), listSchedule: listSchedule9),
-  ];
 
   void getTimeToggle(String time) {
     setState(() {
@@ -49,27 +35,31 @@ class _CalendarCardState extends State<CalendarCard> {
     });
   }
 
-  void loadListSchedule(DateTime dateTime) {
-    CalendarEntity tappedCalendar = _mockCalendarList.singleWhere((element) {
+  List<ScheduleEntity>? loadListSchedule(int day1, int month1, int year1) {
+    CalendarEntity? tappedCalendar = mockCalendarList.singleWhere((element) {
       int day = int.parse(element.dateTime.day);
       int month = int.parse(element.dateTime.month);
       int year = int.parse(
         element.dateTime.year,
       );
-      ;
-      bool isChoose = dateTime.day == day && dateTime.month == month && dateTime.year == year;
+      bool isChoose = day1 == day && month1 == month && year1 == year;
 
       return isChoose;
-    });
-    setState(() {
-      _listSchedule = tappedCalendar.listSchedule;
-    });
+    }, orElse: () => CalendarEntity(dateTime: DateEntity(day: "", month: "", year: ""), listSchedule: const []));
+    if (tappedCalendar ==
+        CalendarEntity(
+          dateTime: DateEntity(day: "", month: "", year: ""),
+          listSchedule: const [],
+        )) {
+      return null;
+    } else {
+      return tappedCalendar.listSchedule;
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    loadListSchedule(DateTime.now());
   }
 
   @override
@@ -80,13 +70,10 @@ class _CalendarCardState extends State<CalendarCard> {
 
   @override
   Widget build(BuildContext context) {
-    int year = DateTime.now().year;
-
     return StreamBuilder(
         initialData: DateTime.now().month,
         stream: _calendarStreamer.calendarStream,
         builder: (context, snapshot) {
-          print(snapshot.data);
           int dayInMoth = DateTime(year, snapshot.data ?? _calendarStreamer.month + 1, 0).day;
           String nameOfMonth = DateFormat('MMMM').format(DateTime(year, snapshot.data ?? _calendarStreamer.month));
           dayInWeek(int day) => DateFormat('EEE').format(DateTime(DateTime.now().year, snapshot.data ?? _calendarStreamer.month, day));
@@ -101,14 +88,7 @@ class _CalendarCardState extends State<CalendarCard> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: mainColor,
-                    gradient: const LinearGradient(
-                      colors: [
-                        mainColor,
-                        Colors.transparent,
-                      ],
-                      begin: Alignment.bottomLeft,
-                      end: Alignment.topRight,
-                    ),
+                    gradient: linearGradient,
                   ),
                   height: widget._size.height * 0.4,
                   child: Column(
@@ -134,7 +114,7 @@ class _CalendarCardState extends State<CalendarCard> {
                 height: 20,
               ),
               Padding(
-                padding: EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.only(left: 20),
                 child: Text(
                   "${dayInWeekFull(chooseItemIndex.value)}, ${chooseItemIndex.value}th",
                   style: const TextStyle(
@@ -143,60 +123,75 @@ class _CalendarCardState extends State<CalendarCard> {
                   ),
                 ),
               ),
-              Card(
-                elevation: 2,
-                child: SizedBox(
-                  height: widget._size.height * 0.4,
-                  child: ListView.builder(
-                    // shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                        child: Container(
-                            width: widget._size.width,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: mainColor.withOpacity(0.2),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _listSchedule[index].title,
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 5,
-                                  ),
-                                  Text(
-                                    "${_listSchedule[index].beginTime} - ${_listSchedule[index].finishTime}",
-                                    style: TextStyle(
-                                      color: mainColor,
-                                      fontWeight: FontWeight.normal,
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                      );
-                    },
-                    itemCount: _listSchedule.length,
-                  ),
-                ),
-              ),
-              SizedBox(
+              _buildListSchedule(day: chooseItemIndex.value, month: snapshot.data ?? _calendarStreamer.month, year: year),
+              const SizedBox(
                 height: 30,
               ),
             ],
           );
         });
+  }
+
+  Widget _buildListSchedule({required int day, required int month, required int year}) {
+    var listData = loadListSchedule(day, month, year);
+    if (listData != null) {
+      return Card(
+        elevation: 2,
+        child: SizedBox(
+          height: widget._size.height * 0.4,
+          child: ListView.builder(
+            // shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: Container(
+                    width: widget._size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: mainColor.withOpacity(0.2),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            listData[index].title,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            "${listData[index].beginTime} - ${listData[index].finishTime}",
+                            style: const TextStyle(
+                              color: mainColor,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )),
+              );
+            },
+            itemCount: listData.length,
+          ),
+        ),
+      );
+    } else {
+      return Card(
+          elevation: 2,
+          child: SizedBox(
+            height: widget._size.height * 0.4,
+            width: widget._size.width,
+            child: const Center(child: Text("There's no plan for this day")),
+          ));
+    }
   }
 
   Flexible _addButton(BuildContext context) {
@@ -243,15 +238,16 @@ class _CalendarCardState extends State<CalendarCard> {
                 setState(() {
                   chooseItemIndex.value = index + 1;
                 });
-                loadListSchedule(DateTime(
-                  DateTime.now().year,
-                  month,
-                  index + 1,
-                ));
+                // loadListScheduleSchedule(DateTime(
+                //   DateTime.now().year,
+                //   month,
+                //   index + 1,
+                // ));
               },
               child: ListenableBuilder(
                 listenable: chooseItemIndex,
                 builder: (context, child) {
+                  bool haveSchedule = loadListSchedule(index + 1, month, year) != null;
                   return Container(
                     margin: const EdgeInsets.symmetric(
                       horizontal: 10,
@@ -282,6 +278,19 @@ class _CalendarCardState extends State<CalendarCard> {
                             color: chooseItemIndex.value - 1 == index ? Colors.black : Colors.white,
                           ),
                         ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        haveSchedule
+                            ? Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(45),
+                                ),
+                              )
+                            : Container()
                       ],
                     ),
                   );
@@ -304,11 +313,18 @@ class _CalendarCardState extends State<CalendarCard> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            GestureDetector(
+            InkWell(
+              // splashColor: mainColor,
+              borderRadius: BorderRadius.circular(10),
+
+              customBorder: const CircleBorder(),
               onTap: () {
                 _calendarStreamer.returnPrevMonth();
               },
-              child: SvgPicture.asset(SvgIcon.arrowPreIcon),
+              child: SvgPicture.asset(
+                SvgIcon.arrowPreIcon,
+                height: 50,
+              ),
             ),
             Text(
               nameOfMonth.toString(),
@@ -320,38 +336,20 @@ class _CalendarCardState extends State<CalendarCard> {
                 )
               ]),
             ),
-            GestureDetector(
+            InkWell(
+              // borderRadius: BorderRadius.circular(10),
+              customBorder: const CircleBorder(side: BorderSide(color: mainColor, width: 1)),
               onTap: () {
                 _calendarStreamer.turnToNextMonth();
               },
-              child: SvgPicture.asset(SvgIcon.arrowNextIcon),
+              child: SvgPicture.asset(
+                SvgIcon.arrowNextIcon,
+                height: 50,
+              ),
             ),
           ],
         ),
       ),
     );
-  }
-}
-
-class CalendarStreamer {
-  int month = DateTime.now().month;
-
-  final StreamController<int> _calendarController = StreamController<int>.broadcast();
-  Stream<int> get calendarStream => _calendarController.stream;
-
-  void returnPrevMonth() {
-    if (month == 1) return;
-    month -= 1;
-    _calendarController.sink.add(month);
-  }
-
-  void turnToNextMonth() {
-    if (month == 12) return;
-    month += 1;
-    _calendarController.sink.add(month);
-  }
-
-  void disposed() {
-    _calendarController.close();
   }
 }

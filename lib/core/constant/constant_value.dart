@@ -1,4 +1,4 @@
-const String baseUrl = 'http://192.168.0.104:8000/';
+const String baseUrl = 'http://192.168.1.46:8000/';
 
 const String useNameNotFound = "Not found usename available";
 
@@ -25,4 +25,6 @@ class SvgIcon {
 
 class Img {
   static String appBarBackground = 'assets/images/image/appBarBgr.png';
+  static String imageSchedule = 'assets/images/image/image_schedule.png';
+  static String imageSchedule2 = 'assets/images/image/image_schedule2.png';
 }

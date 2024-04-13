@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'package:quizz_app/features/home/presentation/pages/card_details.dart';
+import 'package:go_router/go_router.dart';
+import 'package:quizz_app/core/routes/app_router.dart';
 import 'package:quizz_app/features/home/presentation/widgets/card_study_widget.dart';
 
 class TypesOfCardStudy extends StatelessWidget {
@@ -11,11 +11,9 @@ class TypesOfCardStudy extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     void handleOntapCard(String nameCard) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => CardDetails(data: nameCard),
-        ),
+      context.push(
+        AppRouter.cardDetail,
+        extra: nameCard,
       );
     }
 
@@ -57,57 +55,18 @@ class TypesOfCardStudy extends StatelessWidget {
           //   vertical: 10,
           // ),
           height: _size.height * 0.25,
-          child: ListView(
+          child: ListView.builder(
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            children: <Widget>[
-              CardStudyWidget(
+            itemBuilder: (context, index) {
+              return CardStudyWidget(
                 size: _size,
                 nameCard: "Home",
                 onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-              CardStudyWidget(
-                size: _size,
-                nameCard: "Home",
-                onTap: () => handleOntapCard("Home"),
-              ),
-            ],
+              );
+            },
+            itemCount: 10,
           ),
         ),
       ],

@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
+import 'package:quizz_app/features/calendar/mock/date_entity.dart';
+import 'package:quizz_app/features/calendar/mock/mock_data.dart';
+import 'package:quizz_app/features/calendar/mock/schedule_entity.dart';
 
 class PlannerCalendar extends StatefulWidget {
   const PlannerCalendar({super.key});
@@ -13,7 +16,10 @@ class PlannerCalendar extends StatefulWidget {
 }
 
 class _PlannerCalendarState extends State<PlannerCalendar> {
+  late DateTime _datePicked = DateTime.now();
+
   final TextEditingController _dateController = TextEditingController();
+  final TextEditingController _titleController = TextEditingController();
   final TextEditingController _beginTimeController = TextEditingController();
   final TextEditingController _finishTimeController = TextEditingController();
 
@@ -32,6 +38,7 @@ class _PlannerCalendarState extends State<PlannerCalendar> {
     if (picked != null && picked != selectedDate) {
       setState(() {
         _dateController.text = DateFormat.yMMMMEEEEd().format(picked);
+        _datePicked = picked;
       });
     }
   }
@@ -57,7 +64,20 @@ class _PlannerCalendarState extends State<PlannerCalendar> {
 
   void addSchedule() {
     if (_formKey.currentState!.validate()) {
-      print("hien loi de");
+      DateEntity addDate = DateEntity(
+        day: _datePicked.day.toString(),
+        month: _datePicked.month.toString(),
+        year: _datePicked.year.toString(),
+      );
+      ScheduleEntity scheduleEntity = ScheduleEntity(
+        title: _titleController.text,
+        dateTime: addDate,
+        beginTime: _beginTimeController.text,
+        finishTime: _finishTimeController.text,
+      );
+      addScheduleSolve(addDate, scheduleEntity);
+      print("da them ");
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Da them thanh cong!")));
     }
   }
 
@@ -70,15 +90,13 @@ class _PlannerCalendarState extends State<PlannerCalendar> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    // _dateController.text = DateFormat.MMMMEEEEd().format(selectedDate);
+
     _dateController.text = DateFormat.yMMMMEEEEd().format(selectedDate);
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _dateController.dispose();
   }
@@ -159,6 +177,7 @@ class _PlannerCalendarState extends State<PlannerCalendar> {
               height: 10,
             ),
             TextFormField(
+              controller: _titleController,
               validator: (value) => validate(value),
               decoration: InputDecoration(
                   border: OutlineInputBorder(
