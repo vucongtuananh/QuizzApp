@@ -1,7 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
+import 'package:quizz_app/features/calendar/mock/calendar_entity.dart';
+import 'package:quizz_app/features/calendar/mock/date_entity.dart';
+import 'package:quizz_app/features/calendar/mock/mock_data.dart';
+import 'package:quizz_app/features/home/presentation/widgets/list_schedule_today.dart';
 import 'package:quizz_app/features/home/presentation/widgets/types_card_study.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,12 +17,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _mockListScheduleToday = CalendarEntity(dateTime: DateEntity(day: '06', month: '04', year: '2024'), listSchedule: listSchedule1);
+
   List<Widget> listImageHeader = [
     Image.asset('assets/images/image/img1.png'),
     Image.asset('assets/images/image/img2.jpg'),
   ];
   int _currentPage = 0;
-  Timer? _timer;
+  Timer? timer;
   final PageController _pageController = PageController(
     initialPage: 0,
   );
@@ -25,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 2), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
       if (_currentPage < listImageHeader.length - 1) {
         _currentPage++;
       } else {
@@ -34,7 +41,7 @@ class _HomePageState extends State<HomePage> {
       if (_pageController.hasClients) {
         _pageController.animateToPage(
           _currentPage,
-          duration: Duration(milliseconds: 350),
+          duration: const Duration(milliseconds: 350),
           curve: Curves.easeIn,
         );
       }
@@ -45,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     var _size = MediaQuery.of(context).size;
     Widget homeWidget = Scaffold(
-      backgroundColor: Color.fromARGB(255, 250, 250, 250),
+      backgroundColor: const Color.fromARGB(255, 250, 250, 250),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -67,7 +74,9 @@ class _HomePageState extends State<HomePage> {
             expandedHeight: 200.0,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                color: Color.fromARGB(255, 120, 165, 241),
+                decoration: BoxDecoration(
+                  gradient: linearGradient,
+                ),
                 child: Center(
                   child: _searchBar(_size),
                 ),
@@ -80,6 +89,7 @@ class _HomePageState extends State<HomePage> {
           ),
           SliverToBoxAdapter(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 _buildImageHeader(_size),
@@ -94,21 +104,28 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: _size.height * 0.03,
                 ),
+                // ignore: prefer_const_constructors
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: const Text(
+                    "Today's Schedule",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                ListScheduleToday(size: _size, mockListScheduleToday: _mockListScheduleToday)
               ],
             ),
           ),
         ],
       ),
     );
-    // homeWidget = BlocListener<AuthBloc, AuthState>(
-    //   listener: (context, state) {
-    //     if (state is AuthLogoutSuccessState) {
-    //       context.read<AuthBloc>().add(AuthStartEvent());
-    //       context.pushReplacement(AppRouter.login);
-    //     }
-    //   },
-    //   child: homeWidget,
-    // );
     return homeWidget;
   }
 
@@ -116,7 +133,7 @@ class _HomePageState extends State<HomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        SizedBox(
+        const SizedBox(
           width: 20,
         ),
         Container(
@@ -126,7 +143,7 @@ class _HomePageState extends State<HomePage> {
           ),
           child: Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 10,
               ),
               SizedBox(
@@ -141,7 +158,7 @@ class _HomePageState extends State<HomePage> {
                 width: 20,
                 height: 20,
               ),
-              SizedBox(
+              const SizedBox(
                 width: 8,
               )
             ],

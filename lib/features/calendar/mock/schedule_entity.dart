@@ -1,4 +1,4 @@
-import 'package:quizz_app/features/calendar/domain/date_entity.dart';
+import 'package:quizz_app/features/calendar/mock/date_entity.dart';
 
 class ScheduleEntity {
   String title;

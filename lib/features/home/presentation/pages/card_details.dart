@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
+import 'package:quizz_app/core/routes/app_router.dart';
 import 'package:quizz_app/features/home/presentation/widgets/card_word_details.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+enum TtsState { playing, stopped, paused, continued }
 
 class CardDetails extends StatefulWidget {
   const CardDetails({
@@ -19,6 +24,9 @@ class CardDetails extends StatefulWidget {
 
 class _CardDetailsState extends State<CardDetails> {
   late final PageController _pageController;
+  late FlutterTts flutterTts;
+  TtsState ttsState = TtsState.stopped;
+  // ignore: unused_field
   int _currentPage = 0;
   var listCardWord = [
     const CardWordDetails(
@@ -49,7 +57,7 @@ class _CardDetailsState extends State<CardDetails> {
 
   final List<Map<String, String>> _listWords = [
     {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
+    {'House': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
     {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
     {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
     {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
@@ -64,9 +72,27 @@ class _CardDetailsState extends State<CardDetails> {
     {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
     {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
   ];
+
+  Future<void> _speak(String voiceText) async {
+    await flutterTts.setVolume(1);
+    await flutterTts.setSpeechRate(0.5);
+    await flutterTts.setPitch(1);
+    await flutterTts.speak(voiceText);
+  }
+
+  // handleChooseAnswer(BuildContext context) {
+  //   context.push(AppRouter.chooseAnswerLearn);
+  // }
+
   @override
   void initState() {
     super.initState();
+    flutterTts = FlutterTts();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (mounted) {
+    //     handleChooseAnswer(context);
+    //   }
+    // });
     _pageController = PageController(viewportFraction: 1);
   }
 
@@ -94,7 +120,7 @@ class _CardDetailsState extends State<CardDetails> {
             SizedBox(
               height: _size.height * 0.02,
             ),
-            _revisionSelection(_size),
+            _revisionSelection(_size, context),
             SizedBox(
               height: _size.height * 0.02,
             ),
@@ -103,7 +129,7 @@ class _CardDetailsState extends State<CardDetails> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     "Card",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -139,7 +165,7 @@ class _CardDetailsState extends State<CardDetails> {
         return Card(
           margin: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 5),
           child: Padding(
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 10,
               vertical: 10,
             ),
@@ -153,7 +179,22 @@ class _CardDetailsState extends State<CardDetails> {
                         child: Text(
                       _listWords[index].values.toString(),
                     ))),
-                Expanded(flex: 1, child: Align(alignment: Alignment.centerRight, child: Icon(Icons.volume_down_outlined))),
+                Expanded(
+                  flex: 1,
+                  child: InkWell(
+                    onTap: () {
+                      _speak(
+                        _listWords[index].keys.toString(),
+                      );
+                    },
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Icon(
+                        Icons.volume_down_outlined,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -163,49 +204,60 @@ class _CardDetailsState extends State<CardDetails> {
     );
   }
 
-  Column _revisionSelection(Size size) {
+  Column _revisionSelection(Size size, BuildContext context) {
     return Column(
       children: [
-        _selectionElement(size),
-        _selectionElement(size),
-        _selectionElement(size),
+        _selectionElement(
+          size: size,
+        ),
+        _selectionElement(
+          size: size,
+        ),
+        _selectionElement(
+          size: size,
+        ),
       ],
     );
   }
 
-  Padding _selectionElement(Size size) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Card(
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-          child: Row(
-            children: [
-              SvgPicture.asset(
-                SvgIcon.learnIcon,
-                color: mainColor,
-              ),
-              SizedBox(
-                width: size.width * 0.02,
-              ),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Học",
-                    style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    "Ôn tập các thuật ngữ đã học",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
+  Widget _selectionElement({required Size size}) {
+    return GestureDetector(
+      onTap: () {
+        context.push(AppRouter.chooseAnswerLearn);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Card(
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: Row(
+              children: [
+                SvgPicture.asset(
+                  SvgIcon.learnIcon,
+                  color: mainColor,
+                ),
+                SizedBox(
+                  width: size.width * 0.02,
+                ),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Học",
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ],
-              )
-            ],
+                    Text(
+                      "Ôn tập các thuật ngữ đã học",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

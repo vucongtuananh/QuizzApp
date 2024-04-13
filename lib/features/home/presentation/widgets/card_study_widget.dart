@@ -26,15 +26,7 @@ class CardStudyWidget extends StatelessWidget {
               width: _size.width * 0.5,
               height: _size.width * 0.3,
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    mainColor,
-                    Colors.transparent,
-                  ],
-                  begin: Alignment.bottomLeft,
-                  end: Alignment.topRight,
-                ),
-                color: Color.fromARGB(255, 87, 160, 255),
+                gradient: linearGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
