@@ -38,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
           var indexChosen = snapshot.data;
           return Scaffold(
             bottomNavigationBar: NavigationBar(
-              animationDuration: Duration(seconds: 1),
+              animationDuration: const Duration(seconds: 1),
               onDestinationSelected: (int index) {
                 indexStream.chooseIndex(index);
               },

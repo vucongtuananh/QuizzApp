@@ -10,6 +10,7 @@ import 'package:quizz_app/features/create/presentation/pages/create_page.dart';
 import 'package:quizz_app/features/home/presentation/pages/card_details.dart';
 import 'package:quizz_app/features/home/presentation/pages/choose_answer_learn.dart';
 import 'package:quizz_app/features/home/presentation/pages/home_page.dart';
+import 'package:quizz_app/features/home/presentation/pages/listen_and_type.dart';
 import 'package:quizz_app/features/library/presentation/pages/library_page.dart';
 import 'package:quizz_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:quizz_app/main_screen/tab_screen.dart';
@@ -23,6 +24,7 @@ class AppRouter {
   static const String training = "/training";
   static const String cardDetail = "/cardDetail";
   static const String chooseAnswerLearn = "/chooseAnswerLearn";
+  static const String listenAndTypeLearn = "/listenAndTypeLearn";
   static const String login = "/login";
   static const String register = "/register";
   static const String mainScreen = "/";
@@ -64,6 +66,11 @@ final goRoute = GoRouter(
           path: AppRouter.chooseAnswerLearn,
           builder: (context, state) {
             return const ChooseAnswerLearn();
+          }),
+      GoRoute(
+          path: AppRouter.listenAndTypeLearn,
+          builder: (context, state) {
+            return const ListenAndType();
           }),
       GoRoute(
         path: AppRouter.library,

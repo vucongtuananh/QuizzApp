@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +17,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
   late final authState = context.watch<AuthBloc>().state;
   late final _useNameController = TextEditingController(text: (switch (authState) { LoginInitialState(username: final username) => username, _ => '' }));
   late final _passwordController = TextEditingController(text: (switch (authState) { LoginInitialState(password: final password) => password, _ => '' }));
@@ -25,10 +26,37 @@ class _LoginPageState extends State<LoginPage> {
   bool isObscureText = true;
   AuthBloc? _authBloc;
 
+  // final Duration _duration = const Duration(milliseconds: 400);
+  // late AnimationController _animationController;
+  // late Animation<Offset> _animation;
+  // late Animation<Offset> _animationAlign;
+  // late Animation<double> _curvedAnimation;
+  // late Animation<double> _animationOpacity;
+
   @override
   void initState() {
     _authBloc = BlocProvider.of<AuthBloc>(context, listen: false);
+    // _animationController = AnimationController(
+    //   vsync: this,
+    //   duration: _duration,
+    // );
 
+    // _curvedAnimation = CurvedAnimation(
+    //   parent: _animationController,
+    //   curve: Curves.easeInOutCubic,
+    // );
+
+    // _animation = Tween<Offset>(
+    //   begin: const Offset(-0.1, 0),
+    //   end: const Offset(0, 0),
+    // ).animate(_curvedAnimation);
+
+    // _animationOpacity = Tween<double>(begin: 0, end: 1).animate(_curvedAnimation);
+
+    // _animationController.forward();
+    // _animationController.addListener(() {
+    //   setState(() {});
+    // });
     super.initState();
   }
 
@@ -36,6 +64,8 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     _useNameController.dispose();
     _passwordController.dispose();
+    _authBloc!.close();
+    // _animationController.dispose();
     super.dispose();
   }
 
@@ -66,17 +96,69 @@ class _LoginPageState extends State<LoginPage> {
     ;
   }
 
+  @override
+  Widget build(BuildContext logincontext) {
+    final authState = context.watch<AuthBloc>().state;
+
+    var loginMainWidget = (switch (authState) {
+      AuthCheckAlreadyLoginInitialState() => _buildLoginInitialWidget(),
+      LoginInitialState() => _buildLoginInitialWidget(),
+      LoginLoadedFailureState() => _buildLoginLoadedFailureWidget(authState, context),
+      LoginLoadingState() => _buildLoginLoadingWidget(),
+      LoginLoadedSuccessState() => const SizedBox(),
+      _ => const SizedBox(),
+    });
+    loginMainWidget = BlocListener<AuthBloc, AuthState>(
+        // listenWhen: (previous, current) => previous != current,
+        listener: (context, state) {
+          switch (state) {
+            case LoginLoadedSuccessState():
+              context.read<AuthBloc>().add(AuthCheckAlreadyLoginEvent());
+              break;
+            case AuthCheckAlreadyLoginSucessState():
+              context.go(AppRouter.mainScreen);
+              break;
+          }
+        },
+        child: loginMainWidget);
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        backgroundColor: const Color.fromARGB(255, 158, 190, 248),
+        body: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height,
+              minWidth: MediaQuery.of(context).size.width,
+            ),
+            child: Center(
+              child: Container(
+                // height: _size.height * 0.55,
+                margin: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  // top: 200,
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: loginMainWidget,
+              ),
+            ),
+          ),
+        ));
+  }
+
   Widget _buildLoginInitialWidget() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
       children: [
         const Text(
           "Login",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
         ),
         const SizedBox(
-          height: 40,
+          height: 20,
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,99 +185,106 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
         const SizedBox(
-          height: 12,
+          height: 30,
         ),
         Form(
           key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _useNameController,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                  hintText: 'Enter user name',
-                ),
-                validator: validatorUsername,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            TextFormField(
+              controller: _useNameController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                hintText: 'Enter user name',
               ),
-              const SizedBox(
-                height: 12,
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    hintText: 'Enter your password',
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          isObscureText = !isObscureText;
-                        });
-                      },
-                      icon: isObscureText ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
-                    )),
-                validator: validatorPass,
-                obscureText: isObscureText,
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              GestureDetector(
-                onTap: () {
-                  login(
-                    password: _passwordController.text,
-                    userName: _useNameController.text,
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-                  decoration: BoxDecoration(
+              validator: validatorUsername,
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            TextFormField(
+              controller: _passwordController,
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    color: mainColor,
                   ),
-                  child: const Text("Login",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      )),
+                  hintText: 'Enter your password',
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isObscureText = !isObscureText;
+                      });
+                    },
+                    icon: isObscureText ? const Icon(Icons.visibility) : const Icon(Icons.visibility_off),
+                  )),
+              validator: validatorPass,
+              obscureText: isObscureText,
+            ),
+            const SizedBox(
+              height: 12,
+            ),
+            GestureDetector(
+              onTap: () {
+                login(
+                  password: _passwordController.text,
+                  userName: _useNameController.text,
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: mainColor,
                 ),
+                child: const Text("Login",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    )),
               ),
-            ],
-          ),
+            )
+          ]),
         ),
         const SizedBox(
           height: 20,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
+        GestureDetector(
+          onTap: () {
+            context.go(AppRouter.register);
+          },
+          child: const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Text(
               "Don't have a account yet?",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: Colors.grey,
               ),
             ),
-            const SizedBox(
+            SizedBox(
               width: 8,
             ),
-            GestureDetector(
-              onTap: () {
-                context.go(AppRouter.register);
-              },
-              child: const Text(
-                "Register!",
-                style: TextStyle(
-                  color: mainColor,
-                  fontWeight: FontWeight.bold,
-                ),
+            Text(
+              "Register!",
+              style: TextStyle(
+                color: mainColor,
+                fontWeight: FontWeight.bold,
               ),
             )
-          ],
-        )
-      ],
+          ]),
+        ),
+      ]
+          .animate(
+            interval: 50.ms,
+          )
+          .slideX(
+            begin: -0.1,
+            end: 0,
+            curve: Curves.easeInOutCubic,
+            duration: 400.ms,
+          )
+          .fadeIn(
+            curve: Curves.easeInOutCubic,
+            duration: 400.ms,
+          ),
     );
   }
 
@@ -203,14 +292,20 @@ class _LoginPageState extends State<LoginPage> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Text(
-          'Thông báo',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-        ),
+        // const Text(
+        //   'Thông báo',
+        //   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
+        // ),
         const SizedBox(
           height: 20,
         ),
-        Text(state.messageEntity.message),
+        Text(
+          state.messageEntity.message,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         const SizedBox(
           height: 20,
         ),
@@ -227,42 +322,5 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _buildLoginLoadingWidget() {
     return const CircularProgressIndicator();
-  }
-
-  @override
-  Widget build(BuildContext logincontext) {
-    final authState = context.watch<AuthBloc>().state;
-
-    var loginMainWidget = (switch (authState) {
-      AuthCheckAlreadyLoginInitialState() => _buildLoginInitialWidget(),
-      LoginInitialState() => _buildLoginInitialWidget(),
-      LoginLoadedFailureState() => _buildLoginLoadedFailureWidget(authState, context),
-      LoginLoadingState() => _buildLoginLoadingWidget(),
-      LoginLoadedSuccessState() => const SizedBox(),
-      _ => const SizedBox(),
-    });
-    loginMainWidget = BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          switch (state) {
-            case LoginLoadedSuccessState():
-              context.read<AuthBloc>().add(AuthCheckAlreadyLoginEvent());
-              break;
-            case AuthCheckAlreadyLoginSucessState():
-              context.go(AppRouter.mainScreen);
-              break;
-          }
-        },
-        child: loginMainWidget);
-    return Scaffold(
-        backgroundColor: Color.fromARGB(255, 158, 190, 248),
-        body: Center(
-            child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: loginMainWidget)));
   }
 }

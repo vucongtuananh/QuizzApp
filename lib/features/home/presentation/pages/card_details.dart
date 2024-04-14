@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/core/routes/app_router.dart';
-import 'package:quizz_app/features/home/presentation/widgets/card_word_details.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
-enum TtsState { playing, stopped, paused, continued }
+import 'package:quizz_app/features/home/presentation/widgets/detail_header_title.dart';
+import 'package:quizz_app/features/home/presentation/widgets/detail_list_card_word.dart';
+import 'package:quizz_app/features/home/presentation/widgets/detail_list_words.dart';
+import 'package:quizz_app/features/home/presentation/widgets/detail_selection_study.dart';
 
 class CardDetails extends StatefulWidget {
   const CardDetails({
@@ -23,83 +21,14 @@ class CardDetails extends StatefulWidget {
 }
 
 class _CardDetailsState extends State<CardDetails> {
-  late final PageController _pageController;
-  late FlutterTts flutterTts;
-  TtsState ttsState = TtsState.stopped;
-  // ignore: unused_field
-  int _currentPage = 0;
-  var listCardWord = [
-    const CardWordDetails(
-      meaning: "Nhà",
-      word: "Home",
-    ),
-    const CardWordDetails(
-      meaning: "Nhà",
-      word: "Home",
-    ),
-    const CardWordDetails(
-      meaning: "Nhà",
-      word: "Home",
-    ),
-    const CardWordDetails(
-      meaning: "Nhà",
-      word: "Home",
-    ),
-    const CardWordDetails(
-      meaning: "Nhà",
-      word: "Home",
-    ),
-    const CardWordDetails(
-      meaning: "Nhà",
-      word: "Home",
-    ),
-  ];
-
-  final List<Map<String, String>> _listWords = [
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'House': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-    {'Loft': 'Gác lưng, tầng lửng chỉ để xếp đồ, không để ở'},
-  ];
-
-  Future<void> _speak(String voiceText) async {
-    await flutterTts.setVolume(1);
-    await flutterTts.setSpeechRate(0.5);
-    await flutterTts.setPitch(1);
-    await flutterTts.speak(voiceText);
-  }
-
-  // handleChooseAnswer(BuildContext context) {
-  //   context.push(AppRouter.chooseAnswerLearn);
-  // }
-
   @override
   void initState() {
     super.initState();
-    flutterTts = FlutterTts();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (mounted) {
-    //     handleChooseAnswer(context);
-    //   }
-    // });
-    _pageController = PageController(viewportFraction: 1);
   }
 
   @override
   void dispose() {
     super.dispose();
-    _pageController.dispose();
   }
 
   @override
@@ -112,15 +41,21 @@ class _CardDetailsState extends State<CardDetails> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            _bulidListCardWord(_size, _pageController),
+            DetailListCardWord(),
             SizedBox(
               height: _size.height * 0.02,
             ),
-            _headerTitle(_size),
+            DetailHeaderTitle(data: widget.data, size: _size),
             SizedBox(
               height: _size.height * 0.02,
             ),
-            _revisionSelection(_size, context),
+            Column(
+              children: [
+                DetailSelectionStudy(onTap: () => context.push(AppRouter.chooseAnswerLearn)),
+                DetailSelectionStudy(onTap: () => context.push(AppRouter.listenAndTypeLearn)),
+                DetailSelectionStudy(onTap: () => context.push(AppRouter.chooseAnswerLearn)),
+              ],
+            ),
             SizedBox(
               height: _size.height * 0.02,
             ),
@@ -149,7 +84,7 @@ class _CardDetailsState extends State<CardDetails> {
           ],
         ),
       ),
-      _listWord()
+      DetailListWord()
     ]);
     return Scaffold(
         appBar: AppBar(
@@ -157,183 +92,5 @@ class _CardDetailsState extends State<CardDetails> {
           title: const Text(""),
         ),
         body: singleChildScrollView);
-  }
-
-  SliverList _listWord() {
-    return SliverList.builder(
-      itemBuilder: (context, index) {
-        return Card(
-          margin: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 5),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 10,
-            ),
-            child: Row(
-              // mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Expanded(flex: 1, child: Align(alignment: Alignment.centerLeft, child: Text(_listWords[index].keys.toString()))),
-                Expanded(
-                    flex: 2,
-                    child: Center(
-                        child: Text(
-                      _listWords[index].values.toString(),
-                    ))),
-                Expanded(
-                  flex: 1,
-                  child: InkWell(
-                    onTap: () {
-                      _speak(
-                        _listWords[index].keys.toString(),
-                      );
-                    },
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Icon(
-                        Icons.volume_down_outlined,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-      itemCount: _listWords.length,
-    );
-  }
-
-  Column _revisionSelection(Size size, BuildContext context) {
-    return Column(
-      children: [
-        _selectionElement(
-          size: size,
-        ),
-        _selectionElement(
-          size: size,
-        ),
-        _selectionElement(
-          size: size,
-        ),
-      ],
-    );
-  }
-
-  Widget _selectionElement({required Size size}) {
-    return GestureDetector(
-      onTap: () {
-        context.push(AppRouter.chooseAnswerLearn);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Card(
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            child: Row(
-              children: [
-                SvgPicture.asset(
-                  SvgIcon.learnIcon,
-                  color: mainColor,
-                ),
-                SizedBox(
-                  width: size.width * 0.02,
-                ),
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Học",
-                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Ôn tập các thuật ngữ đã học",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _headerTitle(Size _size) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 20,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.data,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              fontSize: 30,
-            ),
-          ),
-          Row(
-            children: [
-              SvgPicture.asset(SvgIcon.avatarBoyIcon, height: _size.height * 0.02),
-              SizedBox(
-                width: _size.width * 0.01,
-              ),
-              const Text(
-                "Vu Cong Tuan anh |  21 items",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _bulidListCardWord(Size _size, PageController controller) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SizedBox(
-            height: _size.height * 0.2,
-            child: PageView.builder(
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              controller: _pageController,
-              itemBuilder: (context, index) {
-                return listCardWord[index];
-              },
-              itemCount: listCardWord.length,
-              onPageChanged: (value) {
-                setState(() {
-                  _currentPage = value;
-                });
-              },
-            ),
-          ),
-        ),
-        SizedBox(
-          height: _size.height * 0.01,
-        ),
-        SmoothPageIndicator(
-            controller: controller,
-            count: listCardWord.length,
-            effect: ExpandingDotsEffect(
-              dotHeight: _size.height * 0.01,
-              dotWidth: _size.height * 0.01,
-              activeDotColor: mainColor,
-              spacing: _size.width * 0.01,
-            )),
-      ],
-    );
   }
 }

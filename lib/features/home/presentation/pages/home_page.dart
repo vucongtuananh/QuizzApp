@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
-import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/features/calendar/mock/calendar_entity.dart';
 import 'package:quizz_app/features/calendar/mock/date_entity.dart';
 import 'package:quizz_app/features/calendar/mock/mock_data.dart';
+import 'package:quizz_app/features/home/presentation/widgets/header_image.dart';
 import 'package:quizz_app/features/home/presentation/widgets/list_schedule_today.dart';
+import 'package:quizz_app/features/home/presentation/widgets/search_bar_home.dart';
 import 'package:quizz_app/features/home/presentation/widgets/types_card_study.dart';
 
 class HomePage extends StatefulWidget {
@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
+    timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
       if (_currentPage < listImageHeader.length - 1) {
         _currentPage++;
       } else {
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
         _pageController.animateToPage(
           _currentPage,
           duration: const Duration(milliseconds: 350),
-          curve: Curves.easeIn,
+          curve: Curves.easeInCubic,
         );
       }
     });
@@ -62,14 +62,7 @@ class _HomePageState extends State<HomePage> {
             // snap: true,
             backgroundColor: Colors.blueAccent,
             stretch: true,
-            onStretchTrigger: () async {
-              // Triggers when stretching
-            },
-            // [stretchTriggerOffset] describes the amount of overscroll that must occur
-            // to trigger [onStretchTrigger]
-            //
-            // Setting [stretchTriggerOffset] to a value of 300.0 will trigger
-            // [onStretchTrigger] when the user has overscrolled by 300.0 pixels.
+
             stretchTriggerOffset: 300.0,
             expandedHeight: 200.0,
             flexibleSpace: FlexibleSpaceBar(
@@ -77,9 +70,7 @@ class _HomePageState extends State<HomePage> {
                 decoration: BoxDecoration(
                   gradient: linearGradient,
                 ),
-                child: Center(
-                  child: _searchBar(_size),
-                ),
+                child: SearchBarHome(size: _size),
               ),
               centerTitle: true,
               title: const Text(
@@ -92,7 +83,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                _buildImageHeader(_size),
+                const HeaderImage(),
                 SizedBox(
                   height: _size.height * 0.03,
                 ),
@@ -127,67 +118,5 @@ class _HomePageState extends State<HomePage> {
       ),
     );
     return homeWidget;
-  }
-
-  Row _searchBar(Size _size) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        const SizedBox(
-          width: 20,
-        ),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-          ),
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 10,
-              ),
-              SizedBox(
-                width: _size.width * 0.6,
-                height: _size.height * 0.05,
-                child: const TextField(
-                  decoration: InputDecoration(border: InputBorder.none, hintText: "Study, sets, questions"),
-                ),
-              ),
-              SvgPicture.asset(
-                SvgIcon.searchIcon,
-                width: 20,
-                height: 20,
-              ),
-              const SizedBox(
-                width: 8,
-              )
-            ],
-          ),
-        ),
-        SvgPicture.asset(SvgIcon.bellIcon),
-      ],
-    );
-  }
-
-  Widget _buildImageHeader(Size _size) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: SizedBox(
-        width: _size.width,
-        height: _size.height * 0.4,
-        child: PageView.builder(
-          controller: _pageController,
-          itemBuilder: (context, index) {
-            return listImageHeader[index];
-          },
-          itemCount: listImageHeader.length,
-          onPageChanged: (value) {
-            setState(() {
-              _currentPage = value;
-            });
-          },
-        ),
-      ),
-    );
   }
 }
