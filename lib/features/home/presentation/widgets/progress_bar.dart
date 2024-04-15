@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
+import 'package:quizz_app/features/home/mock/mock_data.dart';
+import 'package:quizz_app/features/home/presentation/bloc/choose_answer_bloc/progress_bar_cubit.dart';
 
 class ProgressBar extends StatelessWidget {
   const ProgressBar({
@@ -8,6 +11,7 @@ class ProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var progressCubit = context.read<ProgressBarCubit>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -26,12 +30,16 @@ class ProgressBar extends StatelessWidget {
               children: [
                 LayoutBuilder(
                   builder: (context, constraints) {
-                    return Container(
-                      width: constraints.maxWidth * 0.1,
-                      decoration: BoxDecoration(
-                        color: mainColor,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
+                    return BlocBuilder<ProgressBarCubit, int>(
+                      builder: (context, state) {
+                        return Container(
+                          width: constraints.maxWidth / sample_data.length * (progressCubit.state + 1),
+                          decoration: BoxDecoration(
+                            color: mainColor,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -42,15 +50,19 @@ class ProgressBar extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(left: 20),
-          child: RichText(
-              text: const TextSpan(
-                  text: "Question 1/",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 30,
-                  ),
-                  children: [TextSpan(text: "10", style: TextStyle(fontSize: 20))])),
+          child: BlocBuilder<ProgressBarCubit, int>(
+            builder: (context, state) {
+              return RichText(
+                  text: TextSpan(
+                      text: "Question ${progressCubit.state + 1}/",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30,
+                      ),
+                      children: [TextSpan(text: sample_data.length.toString(), style: TextStyle(fontSize: 20))]));
+            },
+          ),
         ),
         const Divider(
           color: Colors.grey,

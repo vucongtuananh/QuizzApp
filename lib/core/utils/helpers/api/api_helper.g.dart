@@ -13,7 +13,7 @@ class _ApiHelper implements ApiHelper {
     this._dio, {
     this.baseUrl,
   }) {
-    baseUrl ??= 'http://192.168.1.46:8000/';
+    baseUrl ??= 'http://192.168.1.37:8000/';
   }
 
   final Dio _dio;

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:quizz_app/features/home/mock/mock_data.dart';
+import 'package:quizz_app/features/home/presentation/bloc/choose_answer_bloc/progress_bar_cubit.dart';
 import 'package:quizz_app/features/home/presentation/widgets/progress_bar.dart';
 import 'package:quizz_app/features/home/presentation/widgets/question_card.dart';
 
@@ -54,6 +57,7 @@ class _ChooseAnswerLearnState extends State<ChooseAnswerLearn> {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    var processCubit = context.read<ProgressBarCubit>();
     return WillPopScope(
       onWillPop: () async {
         _dialogBuilder(context);
@@ -69,23 +73,32 @@ class _ChooseAnswerLearnState extends State<ChooseAnswerLearn> {
           ),
           actions: [
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                context.read<ProgressBarCubit>().skip();
+                _pageController.animateToPage(processCubit.state, duration: const Duration(milliseconds: 400), curve: Curves.easeInOut);
+              },
               child: const Text("Skip"),
             ),
           ],
         ),
         body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProgressBar(),
+            const ProgressBar(),
             SizedBox(
               height: size.height * 0.6,
               child: PageView.builder(
                 controller: _pageController,
-                itemBuilder: (context, index) {
-                  return QuestionCard(size: size);
+                onPageChanged: (value) {
+                  context.read<ProgressBarCubit>().selectedPage(value);
                 },
-                itemCount: 5,
+                itemBuilder: (context, index) {
+                  return QuestionCard(
+                    size: size,
+                    question: sample_data[index],
+                  );
+                },
+                itemCount: 4,
               ),
             ),
           ],
