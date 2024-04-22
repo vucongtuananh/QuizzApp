@@ -279,12 +279,12 @@ class _CalendarCardState extends State<CalendarCard> {
                           ),
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         haveSchedule
                             ? Container(
-                                width: 10,
-                                height: 10,
+                                width: 5,
+                                height: 5,
                                 decoration: BoxDecoration(
                                   color: Colors.red,
                                   borderRadius: BorderRadius.circular(45),

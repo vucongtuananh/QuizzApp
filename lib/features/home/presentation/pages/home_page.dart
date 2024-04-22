@@ -4,10 +4,10 @@ import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/features/calendar/mock/calendar_entity.dart';
 import 'package:quizz_app/features/calendar/mock/date_entity.dart';
 import 'package:quizz_app/features/calendar/mock/mock_data.dart';
-import 'package:quizz_app/features/home/presentation/widgets/header_image.dart';
-import 'package:quizz_app/features/home/presentation/widgets/list_schedule_today.dart';
-import 'package:quizz_app/features/home/presentation/widgets/search_bar_home.dart';
-import 'package:quizz_app/features/home/presentation/widgets/types_card_study.dart';
+import 'package:quizz_app/features/home/presentation/widgets/homePage/header_image.dart';
+import 'package:quizz_app/features/home/presentation/widgets/homePage/list_schedule_today.dart';
+import 'package:quizz_app/features/home/presentation/widgets/homePage/search_bar_home.dart';
+import 'package:quizz_app/features/home/presentation/widgets/homePage/types_card_study.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

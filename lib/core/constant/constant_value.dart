@@ -21,6 +21,7 @@ class SvgIcon {
   static String arrowPreIcon = "assets/images/icon/arrow-prev.svg";
   static String arrowNextIcon = "assets/images/icon/arrow-next.svg";
   static String arrowPreCircle = "assets/images/icon/arrow_pre_circle.svg";
+  static String slowDownIcon = "assets/images/icon/slow_down.svg";
 }
 
 class Img {

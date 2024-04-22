@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quizz_app/core/routes/app_router.dart';
-import 'package:quizz_app/features/home/presentation/widgets/card_study_widget.dart';
+import 'package:quizz_app/features/home/presentation/widgets/homePage/card_study_widget.dart';
 
 class TypesOfCardStudy extends StatelessWidget {
   const TypesOfCardStudy({super.key, required Size size, required this.typeCard}) : _size = size;

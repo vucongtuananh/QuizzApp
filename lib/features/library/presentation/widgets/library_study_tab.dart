@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quizz_app/features/home/presentation/widgets/types_card_study.dart';
+import 'package:quizz_app/features/home/presentation/widgets/homePage/types_card_study.dart';
 
 class LibraryStudyTab extends StatelessWidget {
   const LibraryStudyTab({

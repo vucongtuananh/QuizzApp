@@ -1,17 +1,15 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:quizz_app/features/home/mock/mock_word_model.dart';
 
 class CardWordDetails extends StatefulWidget {
   const CardWordDetails({
     super.key,
-    required this.meaning,
-    required this.word,
+    required this.wordModel,
     // required Size size,
   });
-  final String word;
-  final String meaning;
-  // final Size _size;
+  final WordModel wordModel;
 
   @override
   State<CardWordDetails> createState() => _CardWordDetailsState();
@@ -66,7 +64,7 @@ class _CardWordDetailsState extends State<CardWordDetails> with TickerProviderSt
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Center(child: Text(widget.word)),
+                    child: Center(child: Text(widget.wordModel.word)),
                   )
                 : Transform(
                     alignment: Alignment.center,
@@ -76,7 +74,7 @@ class _CardWordDetailsState extends State<CardWordDetails> with TickerProviderSt
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Center(child: Text(widget.meaning)),
+                      child: Center(child: Text(widget.wordModel.meaning)),
                     ),
                   )),
       ),
