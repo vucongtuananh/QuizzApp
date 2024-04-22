@@ -7,9 +7,13 @@ class DetailSelectionStudy extends StatelessWidget {
   const DetailSelectionStudy({
     super.key,
     required this.onTap,
+    required this.specifyChoice,
+    required this.titleChoice,
   });
 
   final VoidCallback onTap;
+  final String titleChoice;
+  final String specifyChoice;
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +35,15 @@ class DetailSelectionStudy extends StatelessWidget {
                 SizedBox(
                   width: size.width * 0.02,
                 ),
-                const Column(
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Học",
+                      titleChoice,
                       style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     Text(
-                      "Ôn tập các thuật ngữ đã học",
+                      specifyChoice,
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

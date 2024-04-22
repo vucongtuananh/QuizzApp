@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
-import 'package:quizz_app/features/home/mock/mock_data.dart';
-import 'package:quizz_app/features/home/presentation/bloc/choose_answer_bloc/progress_bar_cubit.dart';
+import 'package:quizz_app/features/home/presentation/bloc/progress_cubit/progress_bar_cubit.dart';
 
 class ProgressBar extends StatelessWidget {
   const ProgressBar({
     super.key,
+    required this.currentLength,
+    required this.length,
   });
+
+  final int length;
+  final int currentLength;
 
   @override
   Widget build(BuildContext context) {
-    var progressCubit = context.read<ProgressBarCubit>();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -33,7 +36,7 @@ class ProgressBar extends StatelessWidget {
                     return BlocBuilder<ProgressBarCubit, int>(
                       builder: (context, state) {
                         return Container(
-                          width: constraints.maxWidth / sample_data.length * (progressCubit.state + 1),
+                          width: constraints.maxWidth / length * (currentLength + 1),
                           decoration: BoxDecoration(
                             color: mainColor,
                             borderRadius: BorderRadius.circular(50),
@@ -54,13 +57,13 @@ class ProgressBar extends StatelessWidget {
             builder: (context, state) {
               return RichText(
                   text: TextSpan(
-                      text: "Question ${progressCubit.state + 1}/",
+                      text: "Question ${currentLength + 1}/",
                       style: TextStyle(
                         color: Colors.grey,
                         fontWeight: FontWeight.bold,
                         fontSize: 30,
                       ),
-                      children: [TextSpan(text: sample_data.length.toString(), style: TextStyle(fontSize: 20))]));
+                      children: [TextSpan(text: length.toString(), style: TextStyle(fontSize: 20))]));
             },
           ),
         ),

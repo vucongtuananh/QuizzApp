@@ -1,39 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/features/home/mock/mock_data.dart';
 import 'package:quizz_app/features/home/mock/mock_word_model.dart';
 import 'package:quizz_app/features/home/presentation/bloc/progress_cubit/progress_bar_cubit.dart';
 import 'package:quizz_app/features/home/presentation/bloc/write_learn/write_learn_cubit.dart';
 import 'package:quizz_app/features/home/presentation/bloc/write_learn/write_learn_state.dart';
-import 'package:quizz_app/features/home/presentation/widgets/listen_learn/listen_learn_speaker.dart';
 import 'package:quizz_app/features/home/presentation/widgets/write_learn/answer_input.dart';
+import 'package:quizz_app/features/home/presentation/widgets/write_learn/list_write_word.dart';
 import 'package:quizz_app/features/home/presentation/widgets/write_learn/write_learn_progress_bar.dart';
 
-class ListenLearn extends StatefulWidget {
-  const ListenLearn({
+class WriteLearn extends StatefulWidget {
+  const WriteLearn({
     super.key,
     required this.listWords,
   });
 
   final List<WordModel> listWords;
   @override
-  State<ListenLearn> createState() => _ListenLearnState();
+  State<WriteLearn> createState() => _WriteLearnState();
 }
 
-class _ListenLearnState extends State<ListenLearn> {
+class _WriteLearnState extends State<WriteLearn> {
   late PageController _pageController;
   late TextEditingController _inputController;
   late FocusNode _focusNode;
-  late FlutterTts _textToSpeech;
 
   @override
   void initState() {
     _pageController = PageController(initialPage: 0);
     _inputController = TextEditingController();
     _focusNode = FocusNode();
-    _textToSpeech = FlutterTts();
     super.initState();
   }
 
@@ -45,18 +42,8 @@ class _ListenLearnState extends State<ListenLearn> {
     super.dispose();
   }
 
-  Future<void> _speak(String voiceText) async {
-    await _textToSpeech.setVolume(1);
-    await _textToSpeech.setSpeechRate(0.5);
-    await _textToSpeech.setPitch(1);
-    await _textToSpeech.speak(voiceText);
-  }
-
-  Future<void> _speakLower(String voiceText) async {
-    await _textToSpeech.setVolume(1);
-    await _textToSpeech.setSpeechRate(0.3);
-    await _textToSpeech.setPitch(1);
-    await _textToSpeech.speak(voiceText);
+  bool checkResult(WordModel word, String answer) {
+    return (word.word.toLowerCase() == answer.trim().toLowerCase());
   }
 
   @override
@@ -131,8 +118,9 @@ class _ListenLearnState extends State<ListenLearn> {
                             progressCubit.selectedPage(value);
                           },
                           itemBuilder: (context, index) {
-                            return ListenLearnSpeaker(
-                              wordModel: widget.listWords[index],
+                            return WriteWord(
+                              size: size,
+                              writeWord: widget.listWords[index],
                             );
                           },
                           itemCount: widget.listWords.length,

@@ -3,10 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/core/routes/app_router.dart';
-import 'package:quizz_app/features/home/presentation/widgets/detail_header_title.dart';
-import 'package:quizz_app/features/home/presentation/widgets/detail_list_card_word.dart';
-import 'package:quizz_app/features/home/presentation/widgets/detail_list_words.dart';
-import 'package:quizz_app/features/home/presentation/widgets/detail_selection_study.dart';
+import 'package:quizz_app/features/home/mock/mock_data.dart';
+import 'package:quizz_app/features/home/presentation/widgets/card_detail/detail_header_title.dart';
+import 'package:quizz_app/features/home/presentation/widgets/card_detail/detail_list_card_word.dart';
+import 'package:quizz_app/features/home/presentation/widgets/card_detail/detail_list_words.dart';
+import 'package:quizz_app/features/home/presentation/widgets/card_detail/detail_selection_study.dart';
 
 class CardDetails extends StatefulWidget {
   const CardDetails({
@@ -41,7 +42,7 @@ class _CardDetailsState extends State<CardDetails> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            DetailListCardWord(),
+            const DetailListCardWord(),
             SizedBox(
               height: _size.height * 0.02,
             ),
@@ -51,9 +52,21 @@ class _CardDetailsState extends State<CardDetails> {
             ),
             Column(
               children: [
-                DetailSelectionStudy(onTap: () => context.push(AppRouter.chooseAnswerLearn)),
-                DetailSelectionStudy(onTap: () => context.push(AppRouter.listenAndTypeLearn)),
-                DetailSelectionStudy(onTap: () => context.push(AppRouter.chooseAnswerLearn)),
+                DetailSelectionStudy(
+                  onTap: () => context.push(AppRouter.chooseAnswerLearn),
+                  titleChoice: "Học",
+                  specifyChoice: "Chọn đáp án đúng",
+                ),
+                DetailSelectionStudy(
+                  onTap: () => context.push(AppRouter.writeLearn),
+                  titleChoice: "Viết",
+                  specifyChoice: "Viết lại các thuật ngữ đã học",
+                ),
+                DetailSelectionStudy(
+                  onTap: () => context.push(AppRouter.listenLearn),
+                  titleChoice: "Nghe",
+                  specifyChoice: "Nghe lại các thuật ngữ đã học",
+                ),
               ],
             ),
             SizedBox(
@@ -84,7 +97,9 @@ class _CardDetailsState extends State<CardDetails> {
           ],
         ),
       ),
-      DetailListWord()
+      DetailListWord(
+        listWords: listWords,
+      )
     ]);
     return Scaffold(
         appBar: AppBar(

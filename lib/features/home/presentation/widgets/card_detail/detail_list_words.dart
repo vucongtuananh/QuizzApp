@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
-import 'package:quizz_app/features/home/mock/mock_data.dart';
 
-enum TtsState { playing, stopped, paused, continued }
+import 'package:quizz_app/features/home/mock/mock_data.dart';
+import 'package:quizz_app/features/home/mock/mock_word_model.dart';
+
+import '../../utils/text_to_speech_enum.dart';
 
 class DetailListWord extends StatefulWidget {
-  const DetailListWord({
-    super.key,
-  });
+  const DetailListWord({super.key, required this.listWords});
+
+  final List<WordModel> listWords;
 
   @override
   State<DetailListWord> createState() => _DetailListWordState();
@@ -45,19 +47,14 @@ class _DetailListWordState extends State<DetailListWord> {
             child: Row(
               // mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Expanded(flex: 1, child: Align(alignment: Alignment.centerLeft, child: Text(listWords[index].keys.toString()))),
-                Expanded(
-                    flex: 2,
-                    child: Center(
-                        child: Text(
-                      listWords[index].values.toString(),
-                    ))),
+                Expanded(flex: 1, child: Align(alignment: Alignment.centerLeft, child: Text(widget.listWords[index].word.toString()))),
+                Expanded(flex: 2, child: Center(child: Text(widget.listWords[index].meaning))),
                 Expanded(
                   flex: 1,
                   child: InkWell(
                     onTap: () {
                       _speak(
-                        listWords[index].keys.toString(),
+                        widget.listWords[index].word.toString(),
                       );
                     },
                     child: const Align(

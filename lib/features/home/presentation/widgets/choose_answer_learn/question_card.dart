@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:quizz_app/core/constant/color_value.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quizz_app/features/home/mock/mock_question_model.dart';
-import 'package:quizz_app/features/home/presentation/widgets/option.dart';
+import 'package:quizz_app/features/home/presentation/bloc/choose_answer_bloc/choose_answer_bloc.dart';
+import 'package:quizz_app/features/home/presentation/bloc/choose_answer_bloc/choose_answer_event.dart';
+import 'package:quizz_app/features/home/presentation/widgets/choose_answer_learn/option.dart';
 
 class QuestionCard extends StatelessWidget {
   const QuestionCard({
@@ -44,7 +46,7 @@ class QuestionCard extends StatelessWidget {
           Text(
             question.question,
             style: const TextStyle(
-              color: mainColor,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
               fontSize: 25,
             ),
@@ -58,14 +60,17 @@ class QuestionCard extends StatelessWidget {
               ...List.generate(
                 question.options.length,
                 (index) => Option(
+                  index: index,
                   size: size,
                   option: question.options[index],
-                  onTap: () {
-                    if (question.answerIndex == index) {
-                      print("true");
-                    } else {
-                      print("false");
-                    }
+                  onTap: () async {
+                    context.read<ChooseAnswerBloc>().add(
+                          ChooseAnswerStartEvent(
+                            choosenIndex: index,
+                            question: question,
+                          ),
+                        );
+                    await Future.delayed(Duration(seconds: 3));
                   },
                 ),
               )
