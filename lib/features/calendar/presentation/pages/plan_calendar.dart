@@ -7,6 +7,7 @@ import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/features/calendar/mock/date_entity.dart';
 import 'package:quizz_app/features/calendar/mock/mock_data.dart';
 import 'package:quizz_app/features/calendar/mock/schedule_entity.dart';
+import 'package:quizz_app/local_notification.dart';
 
 class PlannerCalendar extends StatefulWidget {
   const PlannerCalendar({super.key});
@@ -88,6 +89,22 @@ class _PlannerCalendarState extends State<PlannerCalendar> {
     return null;
   }
 
+  TimeOfDay _parseTime(String timeString) {
+    final List<String> parts = timeString.split(' ');
+    final List<String> timeParts = parts[0].split(':');
+    int hour = int.parse(timeParts[0]);
+    int minute = int.parse(timeParts[1]);
+    if (parts.length > 1) {
+      final isPM = parts[1].toLowerCase() == 'pm';
+      if (isPM && hour < 12) {
+        hour += 12;
+      } else if (!isPM && hour == 12) {
+        hour = 0;
+      }
+    }
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -129,7 +146,21 @@ class _PlannerCalendarState extends State<PlannerCalendar> {
   InkWell _addButton() {
     return InkWell(
       splashColor: null,
-      onTap: () => addSchedule(),
+      // onTap: () => addSchedule(),
+      onTap: () {
+        TimeOfDay timeOfDay = _parseTime(_beginTimeController.text);
+
+        LocalNotifications.showScheduleNotification(
+          title: _titleController.text,
+          body: _titleController.text,
+          payload: _titleController.text,
+          dateTime: DateTime.now().add(Duration(seconds: 10)),
+          // dateTime: DateTime(_datePicked.year, _datePicked.month, _datePicked.day, timeOfDay.hour, timeOfDay.minute),
+        );
+        // LocalNotifications.showPeriodicNotifications(body: "Ok", payload: "ok", title: "qua oke");
+        // LocalNotifications.showSimpleNotification(body: "dd", payload: "dfdf", title: "ioi");
+        print("timeOfDay.hour");
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
         width: double.infinity,
