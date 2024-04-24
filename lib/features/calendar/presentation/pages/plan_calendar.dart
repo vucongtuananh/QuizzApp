@@ -7,6 +7,7 @@ import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/features/calendar/mock/date_entity.dart';
 import 'package:quizz_app/features/calendar/mock/mock_data.dart';
 import 'package:quizz_app/features/calendar/mock/schedule_entity.dart';
+import 'package:quizz_app/local_notification.dart';
 
 class PlannerCalendar extends StatefulWidget {
   const PlannerCalendar({super.key});
@@ -129,7 +130,10 @@ class _PlannerCalendarState extends State<PlannerCalendar> {
   InkWell _addButton() {
     return InkWell(
       splashColor: null,
-      onTap: () => addSchedule(),
+      // onTap: () => addSchedule(),
+      onTap: () {
+        LocalNotifications.showSimpleNotification(id: 1, title: "ok", body: "Co tin Nhan", payload: "quaaaa");
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 20),
         width: double.infinity,
