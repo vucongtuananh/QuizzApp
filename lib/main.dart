@@ -6,10 +6,12 @@ import 'package:quizz_app/core/routes/app_router.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_bloc.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_event.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_state.dart';
+import 'package:quizz_app/local_notification.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+  await LocalNotifications.init();
   runApp(const MyApp());
 }
 
