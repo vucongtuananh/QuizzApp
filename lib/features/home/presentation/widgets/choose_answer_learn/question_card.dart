@@ -70,7 +70,7 @@ class QuestionCard extends StatelessWidget {
                             question: question,
                           ),
                         );
-                    await Future.delayed(Duration(seconds: 3));
+                    await Future.delayed(const Duration(seconds: 3));
                   },
                 ),
               )

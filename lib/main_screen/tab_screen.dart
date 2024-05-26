@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/constant/constant_value.dart';
 import 'package:quizz_app/core/di/app_di.dart';
@@ -8,6 +9,7 @@ import 'package:quizz_app/features/create/presentation/pages/create_page.dart';
 import 'package:quizz_app/features/home/presentation/pages/home_page.dart';
 import 'package:quizz_app/features/library/presentation/pages/library_page.dart';
 import 'package:quizz_app/features/profile/presentation/pages/profile_page.dart';
+import 'package:quizz_app/local_notification.dart';
 import 'package:quizz_app/main_screen/indexBnb_stream.dart';
 
 class MainScreen extends StatefulWidget {
@@ -29,6 +31,19 @@ class _MainScreenState extends State<MainScreen> {
   ];
 
   // int currentPageIndex = 0;
+
+  @override
+  void initState() {
+    listenToNotifications();
+    super.initState();
+  }
+
+  listenToNotifications() {
+    print("Listened");
+    LocalNotifications.onClickNotification.stream.listen((event) {
+      indexStream.chooseIndex(3);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

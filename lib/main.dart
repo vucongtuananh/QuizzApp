@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quizz_app/core/constant/color_value.dart';
 import 'package:quizz_app/core/di/app_di.dart';
 import 'package:quizz_app/core/routes/app_router.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_bloc.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_event.dart';
 import 'package:quizz_app/features/authentication/presentation/login/bloc/auth_state.dart';
+import 'package:quizz_app/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:quizz_app/local_notification.dart';
 
 Future<void> main() async {
@@ -46,8 +48,11 @@ class _AppContentState extends State<AppContent> {
   @override
   void initState() {
     super.initState();
+    // listenToNotifications();
     context.read<AuthBloc>().add(AuthCheckAlreadyLoginEvent());
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {

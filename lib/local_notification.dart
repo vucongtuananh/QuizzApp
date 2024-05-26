@@ -1,4 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
+import 'package:quizz_app/core/di/app_di.dart';
+import 'package:quizz_app/main_screen/indexBnb_stream.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -8,8 +11,11 @@ class LocalNotifications {
   static final onClickNotification = BehaviorSubject<String>();
 
 // on tap on any notification
+  @pragma('vm:entry-point')
   static void onNotificationTap(NotificationResponse notificationResponse) {
     onClickNotification.add(notificationResponse.payload!);
+
+    locator<IndexBnbStream>().chooseIndex(3);
   }
 
 // initialize the local notifications
@@ -29,7 +35,7 @@ class LocalNotifications {
     // request notification permissions
     _flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()!.requestNotificationsPermission();
 
-    _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse: onNotificationTap, onDidReceiveBackgroundNotificationResponse: onNotificationTap);
   }
 
@@ -70,9 +76,7 @@ class LocalNotifications {
       notificationDetails,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       payload: payload,
-      androidAllowWhileIdle: true,
     );
-    print("object");
   }
 
   // to schedule a local notification
